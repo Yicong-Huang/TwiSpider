@@ -1,4 +1,5 @@
 import logging
+import pickle
 import re
 import string
 import time
@@ -7,14 +8,12 @@ import urllib
 from typing import List, Set
 
 import requests
-import twitter
 
 from crawlers.crawlerbase import CrawlerBase
-from paths import TWITTER_API_CONFIG_PATH
+from paths import ID_CACHE
 from utilities.cacheset import CacheSet
-from utilities.ini_parser import parse
 
-logger = logging.getLogger('TaskManager')
+logger = logging.getLogger(__name__)
 
 
 class TweetSearchAPICrawler(CrawlerBase):
@@ -23,11 +22,14 @@ class TweetSearchAPICrawler(CrawlerBase):
     def __init__(self):
         super().__init__()
         self.wait_time = 1
-        self.api = twitter.Api(**parse(TWITTER_API_CONFIG_PATH, 'twitter-API'))
         self.data = []
         self.keywords = []
         self.total_crawled_count = 0
-        self.cache: CacheSet[int] = CacheSet()
+        try:
+            with open(ID_CACHE, 'rb') as cache_file:
+                self.cache = pickle.load(cache_file)
+        except:
+            self.cache: CacheSet[int] = CacheSet()
         self.data_from_db_count = 0
 
     def crawl(self, keywords: List, batch_number: int) -> List[int]:
@@ -102,6 +104,8 @@ class TweetSearchAPICrawler(CrawlerBase):
         """using self.cache to filter out duplicates"""
         unique_ids = list(filter(lambda i: i not in self.cache, ids))
         self.cache.update(unique_ids)
+        with open(ID_CACHE, 'wb+') as cache_file:
+            pickle.dump(self.cache, cache_file)
         return unique_ids
 
 

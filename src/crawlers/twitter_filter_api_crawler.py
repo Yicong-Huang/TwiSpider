@@ -1,15 +1,15 @@
 import logging
+import pickle
 import time
 import traceback
 from typing import List
 
-import twitter
 from tokenizer import tokenize, TOK
 
+from api.twitter_api_load_balancer import TwitterAPILoadBalancer
 from crawlers.crawlerbase import CrawlerBase
-from paths import TWITTER_API_CONFIG_PATH
+from paths import ID_CACHE
 from utilities.cacheset import CacheSet
-from utilities.ini_parser import parse
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +20,15 @@ class TweetFilterAPICrawler(CrawlerBase):
     def __init__(self):
         super().__init__()
         self.wait_time = 1
-        self.api = twitter.Api(**parse(TWITTER_API_CONFIG_PATH, 'twitter-API'))
+        self.api_load_balancer = TwitterAPILoadBalancer()
         self.data: List = []
         self.keywords = []
         self.total_crawled_count = 0
-        self.cache: CacheSet[int] = CacheSet()
+        try:
+            with open(ID_CACHE, 'rb') as cache_file:
+                self.cache = pickle.load(cache_file)
+        except:
+            self.cache: CacheSet[int] = CacheSet()
 
     def crawl(self, keywords: List, batch_number: int = 100) -> List[int]:
         """
@@ -53,22 +57,12 @@ class TweetFilterAPICrawler(CrawlerBase):
             logger.info(f'Sending a Request to Twitter Filter API')
             try:
 
-                for tweet in self.api.GetStreamFilter(track=self.keywords, languages=['en'],
-                                                      locations=map(str, [-127.86, 19.55, -55.15, 47.92])):
+                for tweet in self.api_load_balancer.get().GetStreamFilter(track=self.keywords, languages=['en']):
                     self.reset_wait_time()
-
-                    has_keywords = set(self.keywords) & self._tokenize_tweet_text(tweet)
-                    if tweet.get('retweeted_status') and set(self.keywords) & \
-                            self._tokenize_tweet_text(tweet['retweeted_status']):
+                    if tweet.get('retweeted_status'):
                         self._add_to_batch(tweet['retweeted_status']['id'])
-
-
-                    # if the tweet is sent within US and contains keywords, add its id to cache and data (for return)
-                    elif tweet.get('place') and tweet['place']['country_code'] == "US" and has_keywords:
-                        self._add_to_batch(tweet['id'])
-
                     else:
-                        continue
+                        self._add_to_batch(tweet['id'])
 
                     # print Crawling info
                     if len(self.data) > count:
@@ -85,6 +79,8 @@ class TweetFilterAPICrawler(CrawlerBase):
                 self.wait()
 
         count = len(self.data)
+        with open(ID_CACHE, 'wb+') as cache_file:
+            pickle.dump(self.cache, cache_file)
         logger.info(f'Outputting {count} Tweet IDs')
         self.total_crawled_count += count
         logger.info(f'Total crawled count {self.total_crawled_count}')
@@ -116,5 +112,5 @@ if __name__ == '__main__':
 
     tweet_filter_api_crawler = TweetFilterAPICrawler()
     for _ in range(3):
-        raw_tweets = tweet_filter_api_crawler.crawl(['hpv vaccine', 'hpvvaccine', 'hpv', 'vaccine'], batch_number=100)
+        raw_tweets = tweet_filter_api_crawler.crawl(['hpv vaccine', 'hpvvaccine'], batch_number=1)
         print(raw_tweets)

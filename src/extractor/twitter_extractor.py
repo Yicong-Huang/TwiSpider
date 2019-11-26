@@ -20,6 +20,7 @@ class TweetExtractor(ExtractorBase):
     def extract(self, tweets: Iterable[Status]) -> List:
         """extracts useful information after being provided with original tweet data (similar to a filter)"""
         collected_ids = set()
+        self.data.clear()
         for tweet in tweets:
             id = tweet.id
             if id not in collected_ids:
@@ -35,7 +36,7 @@ class TweetExtractor(ExtractorBase):
                      'full_text': tweet.full_text, 'hash_tags': [tag.text for tag in tweet.hashtags],
                      'top_left': top_left,
                      'bottom_right': bottom_right,
-                     'has_been_retweeted': tweet.retweet_count > 0,
+                     'original_tweet_retweet_count': tweet.retweet_count,
                      'profile_pic': user.profile_image_url,
                      'screen_name': user.screen_name,
                      'user_name': user.name,

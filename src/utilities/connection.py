@@ -36,7 +36,7 @@ class Connection:
         """Context Manager enter point, returns an available connection from the _pool"""
         Connection._sem_remaining.acquire(blocking=True)
         self.conn = Connection._pool.getconn(*args, **kwargs)
-        self.get_connection_status(self.conn)
+        # self.get_connection_status(self.conn)
         return self.conn
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -49,7 +49,7 @@ class Connection:
         """returns a newly created connection, which is not maintained by the _pool"""
         connection = psycopg2.connect(*args, **parse(DATABASE_CONFIG_PATH, 'postgresql',
                                                      unwanted_fields=["minconn", "maxconn"]), **kwargs)
-        Connection.get_connection_status(connection)
+        # Connection.get_connection_status(connection)
         return connection
 
     @staticmethod
@@ -72,7 +72,7 @@ class Connection:
     @staticmethod
     def sql_execute(sql: str) -> Iterator:
         """to execute an SQL query and fetch all results"""
-        logger.info(f"SQL: {sql}")
+        # logger.info(f"SQL: {sql}")
         if any([keyword in sql.upper() for keyword in ["INSERT", "UPDATE"]]):
             logger.error("You are running INSERT or UPDATE without committing, transaction aborted. Please retry with "
                          "sql_execute_commit")
@@ -87,12 +87,12 @@ class Connection:
     @staticmethod
     def sql_execute_commit(sql: object) -> None:
         """to execute and commit an SQL query"""
-        logger.info(f"SQL: {sql}")
+        # logger.info(f"SQL: {sql}")
         with Connection() as connection:
             cursor = connection.cursor()
             cursor.execute(sql)
             connection.commit()
-            logger.info(f"Affected rows:{cursor.rowcount}")
+            # logger.info(f"Affected rows:{cursor.rowcount}")
             cursor.close()
 
     @staticmethod

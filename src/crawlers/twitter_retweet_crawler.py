@@ -5,9 +5,8 @@ from typing import List
 
 import twitter
 
+from api.twitter_api_load_balancer import TwitterAPILoadBalancer
 from crawlers.crawlerbase import CrawlerBase
-from paths import TWITTER_API_CONFIG_PATH
-from utilities.ini_parser import parse
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +17,7 @@ class TweetRetweetCrawler(CrawlerBase):
     def __init__(self):
         super().__init__()
         self.wait_time = 1
-        self.api = twitter.Api(**parse(TWITTER_API_CONFIG_PATH, 'twitter-API'))
+        self.api_load_balancer = TwitterAPILoadBalancer()
         self.data: List[twitter.Status] = []
         self.total_crawled_count = 0
 
@@ -37,7 +36,7 @@ class TweetRetweetCrawler(CrawlerBase):
         while True:
             try:
                 logger.info(f'Sending a Request to Twitter Get Retweets API')
-                tweets = self.api.GetRetweets(tweet_id, count=100)
+                tweets = self.api_load_balancer.get().GetRetweets(tweet_id, count=100)
                 self.reset_wait_time()
                 return tweets
             except:

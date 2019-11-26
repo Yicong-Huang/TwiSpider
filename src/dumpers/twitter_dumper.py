@@ -13,22 +13,22 @@ logger = logging.getLogger(__name__)
 
 class TweetDumper(DumperBase):
     INSERT_WITH_LOCATION_QUERY = f"""
-INSERT INTO tweets (id, create_at, text, hash_tags, has_been_retweeted, profile_pic, created_date_time, screen_name, user_name, 
+INSERT INTO tweets (id, create_at, text, hash_tags, original_tweet_retweet_count, profile_pic, created_date_time, screen_name, user_name, 
 followers_count, favourites_count, friends_count, user_id, user_location, statuses_count, location) 
 VALUES %s 
 ON CONFLICT(id) DO UPDATE 
-SET create_at = excluded.create_at, text = excluded.text, hash_tags = excluded.hash_tags, has_been_retweeted = excluded.has_been_retweeted,  
+SET create_at = excluded.create_at, text = excluded.text, hash_tags = excluded.hash_tags, original_tweet_retweet_count = excluded.original_tweet_retweet_count,  
 profile_pic = excluded.profile_pic, created_date_time = excluded.created_date_time,
 screen_name = excluded.screen_name, user_name = excluded.user_name, followers_count = excluded.followers_count, 
 favourites_count = excluded.favourites_count, friends_count= excluded.friends_count, user_id= excluded.user_id, 
 user_location= excluded.user_location, statuses_count= excluded.statuses_count, location = excluded.location;"""
 
     INSERT_WITHOUT_LOCATION_QUERY = f"""
-INSERT INTO tweets (id, create_at, text, hash_tags, has_been_retweeted, profile_pic, created_date_time, screen_name, user_name, 
+INSERT INTO tweets (id, create_at, text, hash_tags, original_tweet_retweet_count, profile_pic, created_date_time, screen_name, user_name, 
 followers_count, favourites_count, friends_count, user_id, user_location, statuses_count) 
 VALUES %s 
 ON CONFLICT(id) DO UPDATE 
-SET create_at = excluded.create_at, text = excluded.text, hash_tags = excluded.hash_tags, has_been_retweeted = excluded.has_been_retweeted,  
+SET create_at = excluded.create_at, text = excluded.text, hash_tags = excluded.hash_tags, original_tweet_retweet_count = excluded.original_tweet_retweet_count,  
 profile_pic = excluded.profile_pic, created_date_time = excluded.created_date_time,
 screen_name = excluded.screen_name, user_name = excluded.user_name, followers_count = excluded.followers_count, 
 favourites_count = excluded.favourites_count, friends_count= excluded.friends_count, user_id= excluded.user_id, 
@@ -70,7 +70,7 @@ user_location= excluded.user_location, statuses_count= excluded.statuses_count;"
                     geom, = next(Connection.sql_execute(f'select st_makepoint({long},{lat})'))
                     records_with_location.append((data['id'], data['date_time'], data['full_text'],
                                                   ', '.join(data['hash_tags']),
-                                                  data['has_been_retweeted'],
+                                                  data['original_tweet_retweet_count'],
                                                   data['profile_pic'],
                                                   data['created_date_time'], data['screen_name'], data['user_name'],
                                                   data['followers_count'], data['favourites_count'],
@@ -80,7 +80,7 @@ user_location= excluded.user_location, statuses_count= excluded.statuses_count;"
                 else:
                     records_without_location.append((data['id'], data['date_time'], data['full_text'],
                                                      ', '.join(data['hash_tags']),
-                                                     data['has_been_retweeted'],
+                                                     data['original_tweet_retweet_count'],
                                                      data['profile_pic'],
                                                      data['created_date_time'], data['screen_name'], data['user_name'],
                                                      data['followers_count'], data['favourites_count'],

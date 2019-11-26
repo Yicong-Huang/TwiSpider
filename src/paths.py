@@ -23,3 +23,5 @@ LOG_CONFIG_PATH = os.path.join(CONFIGS_DIR, 'logger-conf.json')
 CACHE_DIR = os.path.join(ROOT_DIR, 'cache')
 
 FRONTIER_CACHE = os.path.join(CACHE_DIR, 'twitter.frontier.pickle')
+
+ID_CACHE = os.path.join(CACHE_DIR, 'ids.pickle')

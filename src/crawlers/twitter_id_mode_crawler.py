@@ -5,10 +5,9 @@ from typing import List, Iterable
 
 import twitter
 
+from api.twitter_api_load_balancer import TwitterAPILoadBalancer
 from crawlers.crawlerbase import CrawlerBase
 from crawlers.twitter_filter_api_crawler import TweetFilterAPICrawler
-from paths import TWITTER_API_CONFIG_PATH
-from utilities.ini_parser import parse
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ class TweetIDModeCrawler(CrawlerBase):
     def __init__(self):
         super().__init__()
         self.wait_time = 1
-        self.api = twitter.Api(**parse(TWITTER_API_CONFIG_PATH, 'twitter-API'))
+        self.api_load_balancer = TwitterAPILoadBalancer()
         self.data: List[twitter.Status] = []
         self.total_crawled_count = 0
 
@@ -39,7 +38,7 @@ class TweetIDModeCrawler(CrawlerBase):
         while True:
             try:
                 logger.info(f'Sending a Request to Twitter Get Status API')
-                self.data = self.api.GetStatuses(unique_ids)
+                self.data = self.api_load_balancer.get().GetStatuses(unique_ids)
                 self.reset_wait_time()
             except:
                 logger.error('error: ' + traceback.format_exc())
