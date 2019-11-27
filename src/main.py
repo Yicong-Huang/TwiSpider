@@ -87,7 +87,7 @@ class TriSpider:
             time.sleep(1)
 
     def run(self):
-        # self.load_root_tweets()
+        self.load_root_tweets()
         threading.Thread(target=self.run_crawler_for_root_tweets, args=(self.twitter_search_api_crawler, 1)).start()
         threading.Thread(target=self.run_crawler_for_root_tweets, args=(self.twitter_filter_api_crawler, 10)).start()
         threading.Thread(target=self.run_monitor).start()
