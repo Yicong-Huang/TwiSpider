@@ -39,11 +39,13 @@ class TweetRetweetCrawler(CrawlerBase):
                 tweets = self.api_load_balancer.get().GetRetweets(tweet_id, count=100)
                 self.reset_wait_time()
                 return tweets
-            except:
-                logger.error('error: ' + traceback.format_exc())
-                # in this case the collected twitter id will be recorded and tried again next time
-
-                self.wait()
+            except Exception as err:
+                if err.args[0][0]['code'] == 34:
+                    return []
+                else:
+                    logger.error('error: ' + traceback.format_exc())
+                    # in this case the collected twitter id will be recorded and tried again next time
+                    self.wait()
 
     def reset_wait_time(self):
         """resets the wait time"""
