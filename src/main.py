@@ -61,7 +61,7 @@ class Job:
     __repr__ = __str__
 
 
-class TriSpider:
+class TwiSpider:
 
     def __init__(self, keywords=None):
 
@@ -79,6 +79,7 @@ class TriSpider:
         self.twitter_dumper = TweetDumper()
         self.twitter_retweet_of_dumper = TweetRetweetOfDumper()
         self.twitter_extractor = TweetExtractor()
+
 
     def run_crawler_for_root_tweets(self, crawler, batch_number):
         while True:
@@ -144,4 +145,4 @@ class TriSpider:
 
 if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
-    TriSpider().run()
+    TwiSpider().run()
