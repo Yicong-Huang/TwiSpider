@@ -33,8 +33,8 @@ class Job:
     def should_check(self):
         return self.possible_retweets() > 1 or \
                (self.retweet_rate() == 0 and
-                (datetime.now().timestamp() - self.last_check_time) > 15 * 60 and (
-                        datetime.now().timestamp() - self.tweet_created_at) < 60 * 60 * 12)
+                (datetime.now().timestamp() - self.last_check_time) > 30 * 60 and (
+                        datetime.now().timestamp() - self.tweet_created_at) < 60 * 60 * 3)
 
     def possible_retweets(self):
         delta_time = datetime.now().timestamp() - self.last_check_time
