@@ -6,7 +6,8 @@ from utilities.ini_parser import parse
 
 class TwitterAPILoadBalancer:
     def __init__(self):
-        self.apis = [twitter.Api(**config) for config in parse(TWITTER_API_CONFIG_PATH).values()]
+        self.apis = [twitter.Api(**config, sleep_on_rate_limit=True) for config in
+                     parse(TWITTER_API_CONFIG_PATH).values()]
         self.iter_index = -1
 
     def get(self):
