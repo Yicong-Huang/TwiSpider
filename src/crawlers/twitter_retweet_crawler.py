@@ -41,6 +41,10 @@ class TweetRetweetCrawler(CrawlerBase):
                 return tweets
             except Exception as err:
                 if err.args[0][0]['code'] == 34:
+                    logger.info("Skipping since the tweet has been deleted")
+                    return []
+                elif err.args[0][0]['code'] == 200 and err.args[0][0]['message'] == "Forbidden.":
+                    logger.info("Skipping since the tweet is from a private account")
                     return []
                 else:
                     logger.error('error: ' + traceback.format_exc())
