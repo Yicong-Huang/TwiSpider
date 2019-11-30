@@ -1,7 +1,7 @@
 import logging
 
 logging.basicConfig(level=logging.INFO,
-                    format='[%(levelname)s] %(threadName)s:(%(name)s) [%(funcName)s()]   %(message)s')
+                    format='%(asctime)s [%(levelname)s] %(threadName)s:(%(name)s) [%(funcName)s()]   %(message)s')
 logger = logging.getLogger(__name__)
 
 from twi_spider import TwiSpider
