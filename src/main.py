@@ -8,4 +8,7 @@ from twi_spider import TwiSpider
 
 if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
-    TwiSpider().run()
+    with open('keywords.txt') as file:
+        keywords = [line.rstrip() for line in file]
+
+    TwiSpider(keywords).run()
