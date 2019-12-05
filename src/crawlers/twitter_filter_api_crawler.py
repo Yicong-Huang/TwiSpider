@@ -4,11 +4,9 @@ import time
 import traceback
 from typing import List
 
-from tokenizer import tokenize, TOK
-
 from api.twitter_api_load_balancer import TwitterAPILoadBalancer
 from crawlers.crawlerbase import CrawlerBase
-from paths import ID_CACHE
+from paths import ID_CACHE_PATH
 from utilities.cacheset import CacheSet
 
 logger = logging.getLogger(__name__)
@@ -25,7 +23,7 @@ class TweetFilterAPICrawler(CrawlerBase):
         self.keywords = []
         self.total_crawled_count = 0
         try:
-            with open(ID_CACHE, 'rb') as cache_file:
+            with open(ID_CACHE_PATH, 'rb') as cache_file:
                 self.cache = pickle.load(cache_file)
         except:
             self.cache: CacheSet[int] = CacheSet()
@@ -79,16 +77,12 @@ class TweetFilterAPICrawler(CrawlerBase):
                 self.wait()
 
         count = len(self.data)
-        with open(ID_CACHE, 'wb+') as cache_file:
+        with open(ID_CACHE_PATH, 'wb+') as cache_file:
             pickle.dump(self.cache, cache_file)
         logger.info(f'Outputting {count} Tweet IDs')
         self.total_crawled_count += count
         logger.info(f'Total crawled count {self.total_crawled_count}')
         return self.data
-
-    @staticmethod
-    def _tokenize_tweet_text(tweet):
-        return set(txt for kind, txt, _ in tokenize(tweet['text']) if kind in [TOK.WORD, TOK.HASHTAG])
 
     def _add_to_batch(self, tweet_id: int) -> None:
         if tweet_id not in self.cache:
