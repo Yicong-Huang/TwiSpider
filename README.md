@@ -21,4 +21,6 @@ python@3.6+
 
 2. Edit `src/keywords.txt` for monitored keywords, one at a line. Space means boolean AND. `hpv vaccine` will monitor tweets that  both contain `hpv` and `vaccine` 
 
-3. Run with `python3 src/main.py`
+3. Create tables with `src/sqls/create_tables.sql`
+
+4. Run with `python3 src/main.py`
