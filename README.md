@@ -16,4 +16,6 @@ python@3.6+
 `pip install -r requirements.txt`
 
 # Quick Start
+edit `src/keywords.txt` for monitored keywords, one at a line. Space means boolean AND. `hpv vaccine` will monitor tweets that  both contain `hpv` and `vaccine` 
+
 `python3 src/main.py`
