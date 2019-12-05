@@ -16,6 +16,9 @@ python@3.6+
 `pip install -r requirements.txt`
 
 # Quick Start
-edit `src/keywords.txt` for monitored keywords, one at a line. Space means boolean AND. `hpv vaccine` will monitor tweets that  both contain `hpv` and `vaccine` 
 
-`python3 src/main.py`
+1. Fill in configs. Make a copy from `.template` files. For example, copy a file from `twitter.ini.template` and name it as `twitter.ini`, fill your api information inside.
+
+2. Edit `src/keywords.txt` for monitored keywords, one at a line. Space means boolean AND. `hpv vaccine` will monitor tweets that  both contain `hpv` and `vaccine` 
+
+3. Run with `python3 src/main.py`
