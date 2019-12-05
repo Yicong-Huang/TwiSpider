@@ -23,4 +23,4 @@ class TwitterAPILoadBalancer:
 if __name__ == '__main__':
     twitter_api_load_balancer = TwitterAPILoadBalancer()
     for i in range(19):
-        twitter_api_load_balancer.get()
+        print(twitter_api_load_balancer.get())

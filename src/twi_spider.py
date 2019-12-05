@@ -11,7 +11,7 @@ from dumpers.twitter_dumper import TweetDumper
 from dumpers.twitter_retweet_of_dumper import TweetRetweetOfDumper
 from extractor.twitter_extractor import TweetExtractor
 from job import Job
-from paths import FRONTIER_CACHE
+from paths import FRONTIER_CACHE_PATH
 from utilities.connection import Connection
 
 logger = logging.getLogger(__name__)
@@ -23,8 +23,8 @@ class TwiSpider:
 
         self.keywords = ['hpv vaccine', 'hpvvaccine'] if keywords is None else keywords
         try:
-            print(FRONTIER_CACHE)
-            with open(FRONTIER_CACHE, 'rb') as cache_file:
+            print(FRONTIER_CACHE_PATH)
+            with open(FRONTIER_CACHE_PATH, 'rb') as cache_file:
                 self.frontier = pickle.load(cache_file)
         except:
             self.frontier = set()
@@ -71,7 +71,7 @@ class TwiSpider:
 
                         job.set_check_time()
                         time.sleep(7)
-                        with open(FRONTIER_CACHE, 'wb+') as cache_file:
+                        with open(FRONTIER_CACHE_PATH, 'wb+') as cache_file:
                             pickle.dump(self.frontier, cache_file)
                         logger.info(f"done with {job}")
                 else:

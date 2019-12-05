@@ -17,6 +17,9 @@ TWITTER_API_CONFIG_PATH = os.path.join(CONFIGS_DIR, 'twitter.ini')
 # dir for all cache
 CACHE_DIR = os.path.join(ROOT_DIR, 'cache')
 # path of the job frontier set
-FRONTIER_CACHE = os.path.join(CACHE_DIR, 'twitter.frontier.pickle')
+FRONTIER_CACHE_PATH = os.path.join(CACHE_DIR, 'twitter.frontier.pickle')
 # path of the id CacheSet
-ID_CACHE = os.path.join(CACHE_DIR, 'ids.pickle')
+ID_CACHE_PATH = os.path.join(CACHE_DIR, 'ids.pickle')
+
+# path for keywords.txt
+KEYWORDS_PATH = os.path.join(ROOT_DIR, 'keywords.txt')

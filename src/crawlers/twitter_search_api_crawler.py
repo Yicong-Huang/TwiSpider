@@ -10,7 +10,7 @@ from typing import List, Set
 import requests
 
 from crawlers.crawlerbase import CrawlerBase
-from paths import ID_CACHE
+from paths import ID_CACHE_PATH
 from utilities.cacheset import CacheSet
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ class TweetSearchAPICrawler(CrawlerBase):
         self.keywords = []
         self.total_crawled_count = 0
         try:
-            with open(ID_CACHE, 'rb') as cache_file:
+            with open(ID_CACHE_PATH, 'rb') as cache_file:
                 self.cache = pickle.load(cache_file)
         except:
             self.cache: CacheSet[int] = CacheSet()
@@ -104,7 +104,7 @@ class TweetSearchAPICrawler(CrawlerBase):
         """using self.cache to filter out duplicates"""
         unique_ids = list(filter(lambda i: i not in self.cache, ids))
         self.cache.update(unique_ids)
-        with open(ID_CACHE, 'wb+') as cache_file:
+        with open(ID_CACHE_PATH, 'wb+') as cache_file:
             pickle.dump(self.cache, cache_file)
         return unique_ids
 
