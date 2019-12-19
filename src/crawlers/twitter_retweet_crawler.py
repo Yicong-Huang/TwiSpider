@@ -42,21 +42,26 @@ class TweetRetweetCrawler(CrawlerBase):
                 return tweets
             except TwitterError as err:
 
-                if err.args[0][0]['code'] == 34:
-                    logger.info("Skipping since the tweet has been deleted")
-                    return []
-                elif err.args[0][0]['code'] == 200 and err.args[0][0]['message'] == "Forbidden.":
-                    logger.info("Skipping since the tweet is from a private account")
+                # if err.args[0][0]['code'] == 34:
+                #     logger.info("Skipping since the tweet has been deleted")
+                #     return []
+                # elif err.args[0][0]['code'] == 200 and err.args[0][0]['message'] == "Forbidden.":
+                #     logger.info("Skipping since the tweet is from a private account")
+                #     return []
+
+                # else:
+                logger.error('error: ' + traceback.format_exc())
+                    # in this case the collected twitter id will be recorded and tried again next time
+                try:
+                    self.wait()
+                except TimeoutError:
                     return []
 
-                else:
-                    logger.error('error: ' + traceback.format_exc())
-                    # in this case the collected twitter id will be recorded and tried again next time
-                    self.wait()
             except:
                 logger.error('error: ' + traceback.format_exc())
                 # in this case the collected twitter id will be recorded and tried again next time
                 logger.error(f'skipped: {tweet_id}')
+                return []
 
     def reset_wait_time(self):
         """resets the wait time"""
