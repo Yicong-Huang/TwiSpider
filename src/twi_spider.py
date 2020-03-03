@@ -36,16 +36,17 @@ class TwiSpider:
         self.twitter_retweet_of_dumper = TweetRetweetOfDumper()
         self.twitter_extractor = TweetExtractor()
 
-    def run_crawler_for_root_tweets(self, crawler, batch_number):
+    def run_crawler_for_root_tweets(self, crawler, batch_number, sleep_time):
         while True:
             root_tweet_ids = crawler.crawl(self.keywords, batch_number)
             self.crawl_for_root_tweets(root_tweet_ids)
-            time.sleep(1)
+            time.sleep(sleep_time)
 
     def run(self):
         self.load_root_tweets()
-        threading.Thread(target=self.run_crawler_for_root_tweets, args=(self.twitter_search_api_crawler, 1)).start()
-        threading.Thread(target=self.run_crawler_for_root_tweets, args=(self.twitter_filter_api_crawler, 10)).start()
+        threading.Thread(target=self.run_crawler_for_root_tweets, args=(self.twitter_search_api_crawler, 1, 1)).start()
+        threading.Thread(target=self.run_crawler_for_root_tweets,
+                         args=(self.twitter_filter_api_crawler, 100, 10)).start()
         threading.Thread(target=self.run_monitor).start()
 
     def run_monitor(self):
